@@ -1,7 +1,8 @@
 let socket = null
 
 export function connectWebSocket(onMessage) {
-  socket = new WebSocket("ws://localhost:8000/ws")
+  const BASE_URL = import.meta.env.VITE_BACKEND_URL
+  const socket = new WebSocket(`${BASE_URL}/ws`)
 
   socket.onopen = () => {
     console.log("WebSocket conectado")
