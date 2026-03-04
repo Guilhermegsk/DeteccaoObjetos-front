@@ -3,7 +3,7 @@ let socket = null
 export function connectWebSocket(onMessage) {
   const BASE_URL = import.meta.env.VITE_BACKEND_URL
 
-  socket = new WebSocket(`${BASE_URL}/ws`) // 🔥 SEM const
+  socket = new WebSocket(`${BASE_URL}/ws`) 
 
   socket.onopen = () => {
     console.log("WebSocket conectado")
