@@ -22,24 +22,33 @@ onMounted(async () => {
   const stream = await navigator.mediaDevices.getUserMedia({ video: true })
   video.value.srcObject = stream
 
-  connectWebSocket((detections) => {
-    drawBoxes(detections)
-    emit("updateDetections", detections)
-  })
+  video.value.onloadedmetadata = () => {
+    canvas.value.width = video.value.videoWidth
+    canvas.value.height = video.value.videoHeight
 
-  startSendingFrames()
+    connectWebSocket((detections) => {
+      drawBoxes(detections)
+      emit("updateDetections", detections)
+    })
+
+    startSendingFrames()
+  }
 })
 
 function startSendingFrames() {
   setInterval(() => {
+    if (!video.value.videoWidth) return
+
     const ctx = canvas.value.getContext("2d")
-    canvas.value.width = video.value.videoWidth
-    canvas.value.height = video.value.videoHeight
-    ctx.drawImage(video.value, 0, 0)
+
+    ctx.drawImage(video.value, 0, 0,
+      canvas.value.width,
+      canvas.value.height
+    )
 
     const frame = canvas.value.toDataURL("image/jpeg")
-    sendFrame(frame.split(",")[1])
-  }, 200)
+    sendFrame(frame)
+  }, 300)
 }
 
 function drawBoxes(detections) {
