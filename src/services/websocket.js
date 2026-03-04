@@ -2,7 +2,8 @@ let socket = null
 
 export function connectWebSocket(onMessage) {
   const BASE_URL = import.meta.env.VITE_BACKEND_URL
-  const socket = new WebSocket(`${BASE_URL}/ws`)
+
+  socket = new WebSocket(`${BASE_URL}/ws`) // 🔥 SEM const
 
   socket.onopen = () => {
     console.log("WebSocket conectado")
@@ -16,10 +17,16 @@ export function connectWebSocket(onMessage) {
   socket.onclose = () => {
     console.log("WebSocket fechado")
   }
+
+  socket.onerror = (err) => {
+    console.error("Erro no WebSocket:", err)
+  }
 }
 
 export function sendFrame(frame) {
-  if (socket && socket.readyState === 1) {
+  if (socket && socket.readyState === WebSocket.OPEN) {
     socket.send(frame)
+  } else {
+    console.log("Socket não está pronto")
   }
 }
